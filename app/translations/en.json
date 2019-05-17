@@ -1,0 +1,4 @@
+{
+  "app.containers.DefaultLayout.Dashboard": "Dashboard",
+  "app.containers.Dashboard.header": "This is the Dashboard container!"
+}
