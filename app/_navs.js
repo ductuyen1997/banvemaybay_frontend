@@ -13,5 +13,10 @@ export default {
         text: 'NEW',
       },
     },
+    {
+      name: <FormattedMessage {...messages.Airport} />,
+      url: '/airport',
+      icon: 'cui-chart font-lg',
+    },
   ],
 }

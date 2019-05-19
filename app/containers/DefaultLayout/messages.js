@@ -29,4 +29,8 @@ export default defineMessages({
     id: `${scope}.Logout`,
     defaultMessage: 'Logout',
   },
+  Airport: {
+    id: `${scope}.Airport`,
+    defaultMessage: 'Airport',
+  },
 })

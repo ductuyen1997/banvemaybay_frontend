@@ -15,6 +15,7 @@ function createReducer(injectedReducers = {}) {
     language: require('./containers/LanguageProvider/reducer').reducer, // eslint-disable-line,
     user: require('./redux/userRedux').reducer, // eslint-disable-line
     app: require('./redux/appRedux').reducer, // eslint-disable-line
+    airport: require('./redux/airportRedux').reducer, // eslint-disable-line
     ...injectedReducers,
   })
   const mergeWithRouterState = connectRouter(history)
