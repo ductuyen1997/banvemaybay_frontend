@@ -1,10 +1,15 @@
 import React, { Component } from 'react'
 import { Row } from 'reactstrap'
-import { Card, Button, Modal, Form, Input } from 'antd'
+import { Card, Button, Modal, Form, Input, Select } from 'antd'
 import { connect } from 'react-redux'
+import { get, findIndex} from 'lodash'
 import { Helmet } from 'react-helmet'
+import ReactTable from 'react-table'
 
 import AirportActions from '../../redux/airportRedux'
+import { CITY_CODES } from '../../utils/constants'
+
+const cityCode = []
 
 class Airport extends Component {
   constructor(props) {
@@ -16,6 +21,15 @@ class Airport extends Component {
       city: '',
       photo: '',
     }
+  }
+
+  componentDidMount = () => {
+    this.createArrayCityCode()
+    this.props.airportsRequest({ limit: 0, skip: 0 })
+  }
+
+  createArrayCityCode = () => {
+    CITY_CODES.forEach((code, city) => cityCode.push({ city, code }))
   }
 
   showModal = () => {
@@ -31,7 +45,6 @@ class Airport extends Component {
       content: 'Some descriptions',
       onOk() {
         that.handleSubmit()
-        that.showSuccess()
       },
       onCancel() { },
     })
@@ -42,6 +55,7 @@ class Airport extends Component {
       title: 'This is a success message',
       content: 'some messages...some messages...',
     })
+    this.resetForm()
   }
 
   handleOk = () => {
@@ -55,9 +69,9 @@ class Airport extends Component {
   handleSubmit = () => {
     const { name, address, city, photo } = this.state
     const params = { name, address, city, photo }
-    this.props.createAirportRequest(params)
-    console.log(params)
+    this.props.createAirportRequest(params, () => this.showSuccess())
   }
+
 
   resetForm = () => {
     this.setState({
@@ -69,8 +83,16 @@ class Airport extends Component {
     })
   }
 
+  renderCity = (item, index) => (
+    <Select.Option key={index}>
+      {item.city}
+    </Select.Option>
+  )
+
   render() {
-    const { visible, name, address, city, photo } = this.state
+    const { visible, name, address, photo } = this.state
+    const { airports } = this.props
+
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -94,6 +116,7 @@ class Airport extends Component {
           size="small"
           className="w-100"
           extra={<Button
+            icon="plus-circle"
             type="primary"
             size="small"
             className="bg-success"
@@ -101,7 +124,44 @@ class Airport extends Component {
             Create
           </Button>}
         >
-
+          {
+            airports.length > 0 && cityCode.length > 0 && (
+              <ReactTable
+                data={airports}
+                defaultPageSize={8}
+                columns={[{
+                  Header: 'Name',
+                  accessor: 'name',
+                }, {
+                  Header: 'Address',
+                  accessor: 'address',
+                }, {
+                  id: 'city',
+                  Header: 'City',
+                  accessor: d => cityCode[findIndex(cityCode, item => +item.code === +d.city)].city,
+                }, {
+                  Header: 'Actions',
+                  accessor: '_id',
+                  // eslint-disable-next-line no-unused-vars
+                  Cell: (props) => (
+                    <div>
+                      <Button
+                        type="primary"
+                        icon="form"
+                        size="small"
+                        ghost>Edit</Button>
+                      <Button
+                        className="ml-1"
+                        type="danger"
+                        icon="delete"
+                        size="small"
+                        ghost>Delete</Button>
+                    </div>
+                  ),
+                }]}
+              />
+            )
+          }
         </Card>
 
         <Modal
@@ -140,10 +200,14 @@ class Airport extends Component {
             label="City"
             required
           >
-            <Input
-              value={city}
-              onChange={(e) => this.setState({ city: e.target.value })}
-            />
+            <Select
+              showSearch
+              style={{ width: 200 }}
+              placeholder="Select a city"
+              onChange={(e) => this.setState({ city: cityCode[e].code })}
+            >
+              {cityCode.map(this.renderCity)}
+            </Select>
           </Form.Item>
 
           <Form.Item
@@ -164,8 +228,15 @@ class Airport extends Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  createAirportRequest: (params, resolve, reject) => dispatch(AirportActions.createAirportRequest(params, resolve, reject)),
+const mapStateToProps = (state) => ({
+  airports: get(state.airport.toJS(), ['airports']),
 })
 
-export default connect(null, mapDispatchToProps)(Airport)
+const mapDispatchToProps = (dispatch) => ({
+  createAirportRequest: (params, resolve, reject) =>
+    dispatch(AirportActions.createAirportRequest(params, resolve, reject)),
+  airportsRequest: (params, resolve, reject) =>
+    dispatch(AirportActions.airportsRequest(params, resolve, reject)),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Airport)
