@@ -1,0 +1,111 @@
+// Here you can add other styles
+.flex {
+  display: flex;
+  align-items: center;
+  &--center {
+    justify-content: center;
+  }
+  &--right {
+    justify-content: flex-end
+  }
+  &--left {
+    justify-content: flex-start
+  }
+  &--stretch {
+    justify-content: space-between;
+  }
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+  margin-bottom: 0px !important;
+}
+
+// Cutom tabs reactstrap
+.tab-content {
+  border: none;
+  border-top: 1px solid #c8ced3;
+}
+
+// Custom react table
+// custom style for react table
+$cell-padding: 0.625rem 1rem;
+
+.ReactTable {
+  .rt-noData {
+    z-index: 0;
+  }
+  .-pagination {
+    .-pageJump {
+      margin: 0 3px;
+    }
+    .-previous, .-next {
+      flex: 1;
+    }
+    .-center {
+      flex: none;
+    }
+  }
+
+  .rt-thead {
+    font-weight: bold;
+
+    .rt-th {
+      padding: $cell-padding;
+    }
+  }
+
+  .rt-tbody {
+    .rt-tr {
+      align-items: center;
+    }
+    .rt-td {
+      padding: $cell-padding;
+      text-align: center;
+    }
+    .rt-expandable {
+      padding: 7px 5px;
+    }
+  }
+}
+
+.rtb-container {
+  border: 1px solid #c2cfd6;
+  border-top: none;
+  background: #fff;
+  max-height: calc(100vh - 191px);
+}
+
+.rtb-container-md {
+  border: 1px solid #c2cfd6;
+  border-top: none;
+  background: #fff;
+  max-height: 600px;
+  overflow-y: scroll;
+}
+
+.rtb-card-header {
+  border: 1px solid #c2cfd6;
+  border-bottom: none;
+}
+
+.rtb-card-header-above-input {
+  border: 0.5px solid #c2cfd6;
+  border-bottom: none;
+}
+
+.rtb-sub-row {
+  padding: 0.75rem 1.25rem;
+}
+
+.rtb-ul-notes {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+// Custome tooltip when valid form reactstrap
+.invalid-tooltip {
+  position: relative;
+  display: inline-block !important;
+  margin-top: .2rem !important;
+}

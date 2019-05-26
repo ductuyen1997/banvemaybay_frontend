@@ -1,0 +1,10 @@
+{
+  "app.containers.DefaultLayout.Dashboard": "Bảng điều khiển",
+  "app.containers.Dashboard.header": "Trang điều khiển!",
+  "app.containers.DefaultLayout.SupportedLanguages": "Ngôn ngữ hỗ trợ",
+  "app.containers.DefaultLayout.Account": "Tài khoản",
+  "app.containers.DefaultLayout.Logout": "Đăng xuất",
+  "app.containers.DefaultLayout.Airport": "Sân bay",
+
+  "app.containers.Airport.createButton": "Tạo mới"
+}

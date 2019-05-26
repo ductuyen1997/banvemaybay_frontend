@@ -1,0 +1,5 @@
+{
+  "app.containers.DefaultLayout.Dashboard": "Dashboard",
+  "app.containers.DefaultLayout.Airport": "Airport",
+  "app.containers.Dashboard.header": "This is the Dashboard container!"
+}
