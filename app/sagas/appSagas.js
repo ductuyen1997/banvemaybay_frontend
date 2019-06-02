@@ -4,6 +4,7 @@ import {
 import { replace } from 'react-router-redux'
 import { delay } from 'redux-saga'
 import Notifications from 'react-notification-system-redux'
+import { Modal } from 'antd'
 import { setToken } from '../configures/axios'
 import AppActions, { AppTypes } from '../redux/appRedux'
 import UserActions from '../redux/userRedux'
@@ -13,6 +14,7 @@ function* appRootSagas() {
     yield takeLatest(AppTypes.SHOW_SUCCESS_REQUEST, showSuccessRequest),
     yield takeLatest(AppTypes.SHOW_ERROR_REQUEST, showErrorRequest),
     yield takeLatest(AppTypes.STARTUP_WORKING_FLOW, startupWorkingFlow),
+    yield takeLatest(AppTypes.CONFIRM, confirm),
   ])
 }
 
@@ -97,6 +99,22 @@ function* showErrorRequest(action) {
 
     yield put(Notifications.error(notificationOpts))
   }
+}
+
+function* confirm({ title, content, okText, cancelText, actionSuccess, actionFailure }) {
+  Modal.confirm({
+    title,
+    content,
+    zIndex: 10000,
+    okText,
+    cancelText,
+    onOk() {
+      if (actionSuccess) actionSuccess()
+    },
+    onCancel() {
+      if (actionFailure) actionFailure()
+    },
+  })
 }
 
 export default appRootSagas

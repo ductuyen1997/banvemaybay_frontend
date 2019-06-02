@@ -6,7 +6,7 @@ const request = axios.create()
 request.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 request.defaults.timeout = 30000
 if (isProduction) {
-  request.defaults.baseURL = 'https://api.weva.vn'
+  request.defaults.baseURL = 'https://api.BVMB.vn'
 } else {
   request.defaults.baseURL = 'http://localhost:3004'
 }

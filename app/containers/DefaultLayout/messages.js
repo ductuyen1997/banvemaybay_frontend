@@ -33,4 +33,8 @@ export default defineMessages({
     id: `${scope}.Airport`,
     defaultMessage: 'Airport',
   },
+  Flight: {
+    id: `${scope}.Flight`,
+    defaultMessage: 'Flight',
+  },
 })

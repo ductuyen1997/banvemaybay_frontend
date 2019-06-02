@@ -8,6 +8,8 @@ const { Types, Creators } = createActions({
   getAppReady: ['isReady'],
   showSuccessRequest: ['message'],
   showErrorRequest: ['error'],
+
+  confirm: ['title', 'content', 'okText', 'cancelText', 'actionSuccess', 'actionFailure'],
 })
 
 export const AppTypes = Types
@@ -24,9 +26,13 @@ const startupWorkingFlow = () => INITIAL_STATE
 
 const getAppReady = (state, { isReady }) => state.merge({ isReady })
 
+const confirm = state => state
+
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.STARTUP_WORKING_FLOW]: startupWorkingFlow,
   [Types.GET_APP_READY]: getAppReady,
+
+  [Types.CONFIRM]: confirm,
 })

@@ -18,5 +18,10 @@ export default {
       url: '/airport',
       icon: 'cui-chart font-lg',
     },
+    {
+      name: <FormattedMessage {...messages.Flight} />,
+      url: '/flight',
+      icon: 'cui-chart font-lg',
+    },
   ],
 }
