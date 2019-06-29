@@ -37,4 +37,8 @@ export default defineMessages({
     id: `${scope}.Flight`,
     defaultMessage: 'Flight',
   },
+  AirTicket: {
+    id: `${scope}.AirTicket`,
+    defaultMessage: 'AirTicket',
+  },
 })

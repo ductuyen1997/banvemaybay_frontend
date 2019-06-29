@@ -5,6 +5,6 @@
   "app.containers.DefaultLayout.Account": "Tài khoản",
   "app.containers.DefaultLayout.Logout": "Đăng xuất",
   "app.containers.DefaultLayout.Airport": "Sân bay",
-
-  "app.containers.Airport.createButton": "Tạo mới"
+  "app.containers.Airport.createButton": "Tạo mới",
+  "app.containers.AirTicket.createButton": "Tạo mới"
 }

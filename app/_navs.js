@@ -23,5 +23,10 @@ export default {
       url: '/flight',
       icon: 'cui-chart font-lg',
     },
+    {
+      name: <FormattedMessage {...messages.AirTicket} />,
+      url: '/air-ticket',
+      icon: 'cui-chart font-lg',
+    },
   ],
 }

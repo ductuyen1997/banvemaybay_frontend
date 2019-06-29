@@ -72,3 +72,10 @@ export const CITY_CODES = new Map([
 
 export const VIETNAMESE_CODE = 'vi'
 export const ENGLISH_CODE = 'en'
+
+
+// Define rank ticket
+export const RANK_TICKET = {
+  LUXURIOUS: 'luxurious',
+  ORDINARY: 'ordinary',
+}

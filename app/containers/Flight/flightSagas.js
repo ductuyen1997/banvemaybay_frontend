@@ -10,6 +10,8 @@ export default function* airportRootSagas() {
     yield takeLatest(FlightTypes.GET_AIRPORTS_REQUEST, getAirportsRequest),
     yield takeLatest(FlightTypes.CREATE_FLIGHT_REQUEST, createFlightRequest),
     yield takeLatest(FlightTypes.GET_FLIGHTS_REQUEST, getFlightsRequest),
+    yield takeLatest(FlightTypes.DELETE_FLIGHT_REQUEST, deleteFlightsRequest),
+    yield takeLatest(FlightTypes.UPDATE_FLIGHT_REQUEST, updateFlightRequest),
   ])
 }
 
@@ -43,5 +45,28 @@ function* getFlightsRequest({ params }) {
   } catch (error) {
     yield put(FlightActions.getFlightsFailure(error))
     yield put(AppActions.showErrorRequest(error))
+  }
+}
+
+function* deleteFlightsRequest({ flightId, index }) {
+  try {
+    yield call(flightAPI.deleteFlight, flightId)
+    yield put(FlightActions.deleteFlightSuccess(index))
+    yield put(AppActions.showSuccessRequest('Delete flight success'))
+  } catch (err) {
+    yield put(FlightActions.deleteFlightFailure(err))
+    yield put(AppActions.showErrorRequest(err))
+  }
+}
+
+function* updateFlightRequest({ flightId, params, acctionSuccess }) {
+  try {
+    const { flight } = yield call(flightAPI.updateFlight, flightId, params)
+    yield put(FlightActions.updateFlightSuccess(flight))
+    yield put(AppActions.showSuccessRequest('Update flight success'))
+    if (acctionSuccess) acctionSuccess()
+  } catch (err) {
+    yield put(FlightActions.updateFlightFailure(err))
+    yield put(AppActions.showErrorRequest(err))
   }
 }

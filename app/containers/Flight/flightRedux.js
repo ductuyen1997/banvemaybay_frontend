@@ -15,6 +15,14 @@ const { Types, Creators } = createActions({
   getFlightsRequest: ['params', 'resolve', 'reject'],
   getFlightsSuccess: ['flights'],
   getFlightsFailure: ['error'],
+
+  deleteFlightRequest: ['flightId', 'index'],
+  deleteFlightSuccess: ['index'],
+  deleteFlightFailure: ['error'],
+
+  updateFlightRequest: ['flightId', 'params', 'acctionSuccess'],
+  updateFlightSuccess: ['flight'],
+  updateFlightFailure: ['error'],
 })
 
 export const FlightTypes = Types
@@ -48,6 +56,50 @@ const getFlightsRequest = (state) => state.merge({ isGetFlightsRequest: true })
 const getFlightsSuccess = (state, { flights }) => state.merge({ isGetFlightsRequest: false, flights })
 const getFlightsFailure = (state) => state.merge({ isGetFlightsRequest: false })
 
+// Delete airport
+const deleteFlightRequest = state =>
+  state.merge({ isDeletingFlight: true })
+
+const deleteFlightSuccess = (state, { index }) => {
+  const { flights } = state.toJS()
+  flights.splice(index, 1)
+  return state.merge({
+    isDeletingFlight: false,
+    flights,
+  })
+}
+
+const deleteFlightFailure = (state, { error }) =>
+  state.merge({ isDeletingFlight: false, error })
+
+
+
+// Update flight
+const updateFlightRequest = state =>
+  state.merge({ isUpdatingFlight: true })
+
+const updateFlightSuccess = (state, { flight }) => {
+  const { flights } = state.toJS()
+
+  const indexFlight = flights.findIndex(item => item._id === flight._id)
+  if (indexFlight >= 0) {
+    flights[indexFlight] = flight
+  } else {
+    flights.push(flight)
+  }
+
+  return state.merge({
+    isUpdatingFlight: false,
+    flights,
+  })
+}
+
+const updateFlightFailure = (state, { error }) =>
+  state.merge({
+    isUpdatingFlight: false,
+    error,
+  })
+
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
@@ -62,4 +114,12 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.GET_FLIGHTS_REQUEST]: getFlightsRequest,
   [Types.GET_FLIGHTS_SUCCESS]: getFlightsSuccess,
   [Types.GET_FLIGHTS_FAILURE]: getFlightsFailure,
+
+  [Types.DELETE_FLIGHT_REQUEST]: deleteFlightRequest,
+  [Types.DELETE_FLIGHT_SUCCESS]: deleteFlightSuccess,
+  [Types.DELETE_FLIGHT_FAILURE]: deleteFlightFailure,
+
+  [Types.UPDATE_FLIGHT_REQUEST]: updateFlightRequest,
+  [Types.UPDATE_FLIGHT_SUCCESS]: updateFlightSuccess,
+  [Types.UPDATE_FLIGHT_FAILURE]: updateFlightFailure,
 })

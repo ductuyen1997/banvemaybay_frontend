@@ -17,13 +17,19 @@ import FlightActions, { reducer } from './flightRedux'
 import saga from './flightSagas'
 
 const { Option } = Select
+
 const INIT_STATE = {
   visible: false,
   fromAirportId: '',
   toAirportId: '',
   flightTime: null,
   times: null,
-  numSeats: 0,
+  numSeatsLuxurious: null,
+  priceLuxurious: null,
+  numSeatsOrdinary: null,
+  priceOrdinary: null,
+  isUpdate: false,
+  flightUpdateId: '',
 }
 
 class Flight extends Component {
@@ -47,16 +53,54 @@ class Flight extends Component {
       toAirportId,
       flightTime,
       times,
-      numSeats,
+      numSeatsLuxurious,
+      priceLuxurious,
+      numSeatsOrdinary,
+      priceOrdinary,
+      isUpdate,
+      flightUpdateId,
     } = this.state
-    const { confirm, createFlightRequest } = this.props
+    const { confirm, createFlightRequest, updateFlightRequest } = this.props
+
+    if (isUpdate) {
+      confirm(
+        `Are you sure to update flight?`,
+        'Once you clicked update can\'t undo',
+        'Yes',
+        'No',
+        () => updateFlightRequest(flightUpdateId,
+          {
+            fromAirportId,
+            toAirportId,
+            flightTime,
+            times,
+            numSeatsLuxurious,
+            priceLuxurious,
+            numSeatsOrdinary,
+            priceOrdinary,
+          },
+          this.resetForm(),
+        )
+      )
+      return
+    }
+
     confirm(
       `Are you sure to create flight?`,
       'discriptions',
       'Create',
       'Cancel',
       () => {
-        const params = { fromAirportId, toAirportId, flightTime, times, numSeats }
+        const params = {
+          fromAirportId,
+          toAirportId,
+          flightTime,
+          times,
+          numSeatsLuxurious,
+          priceLuxurious,
+          numSeatsOrdinary,
+          priceOrdinary,
+        }
         createFlightRequest(params, () => this.resetForm())
       }
     )
@@ -76,27 +120,33 @@ class Flight extends Component {
     </Select.Option>
   )
 
-  // Click delete airport 
-  // onClickDeleteAirport(airport, index) {
-  //   const { deleteAirportRequest, confirm } = this.props
-  //   confirm(
-  //     `Are you sure to delete ${airport.name} airport?`,
-  //     'Once you clicked delete can\'t undo',
-  //     'Delete',
-  //     'Cancel',
-  //     () => deleteAirportRequest(airport._id, index)
-  //   )
-  // }
+  onClickDeleteFlight(flight, index) {
+    const { deleteFlightRequest, confirm } = this.props
+    confirm(
+      `Are you sure to delete flight?`,
+      'Once you clicked delete can\'t undo',
+      'Delete',
+      'Cancel',
+      () => deleteFlightRequest(flight._id, index)
+    )
+  }
 
-  // Click update airport 
-  // onClickUpdateAirport(airport) {
-  //   this.setState({
-  //     ...airport,
-  //     airportUpdateId: airport._id,
-  //     visible: true,
-  //     isUpdate: true,
-  //   })
-  // }
+  // Click update flight 
+  onClickUpdateFlight(flight) {
+    this.setState({
+      fromAirportId: flight._id,
+      toAirportId: flight._id,
+      flightTime: flight.times,
+      times: flight.times,
+      numSeatsLuxurious: flight.numSeatsLuxurious,
+      priceLuxurious: flight.priceLuxurious,
+      numSeatsOrdinary: flight.numSeatsOrdinary,
+      priceOrdinary: flight.priceOrdinary,
+      flightUpdateId: flight._id,
+      visible: true,
+      isUpdate: true,
+    })
+  }
 
   renderSelectAirports = (airport) => (
     <Option
@@ -107,7 +157,15 @@ class Flight extends Component {
   )
 
   render() {
-    const { visible } = this.state
+    const {
+      visible,
+      isUpdate,
+      times,
+      numSeatsLuxurious,
+      priceLuxurious,
+      numSeatsOrdinary,
+      priceOrdinary,
+    } = this.state
     const { airports, flights } = this.props
 
     const formItemLayout = {
@@ -124,8 +182,8 @@ class Flight extends Component {
     return (
       <Row>
         <Helmet>
-          <title>Airport</title>
-          <meta name="airport" content="Description of Airport" />
+          <title>Flight</title>
+          <meta name="flight" content="Description of flight" />
         </Helmet>
 
         <Card
@@ -137,7 +195,10 @@ class Flight extends Component {
             type="primary"
             size="small"
             className="bg-success"
-            onClick={() => this.setState({ visible: true })} >
+            onClick={() => {
+              this.resetForm()
+              this.setState({ visible: true })
+            }} >
             Create
           </Button>}
         >
@@ -158,37 +219,34 @@ class Flight extends Component {
                   id: 'flight-time',
                   Header: 'Flight time',
                   accessor: d => moment(d.flightTime).format('DD/MM/YYYY - HH:mm'),
-                }, {
-                  id: 'times',
-                  Header: 'Times',
-                  accessor: d => `${d.times} hours`,
-                }, {
+                },
+                {
                   id: 'numseats',
                   Header: 'Number seats',
-                  accessor: d => `${d.numSeats} seats`,
+                  accessor: d => `${d.numSeatsLuxurious + d.numSeatsOrdinary} seats`,
                 },
-                  // {
-                  //   Header: 'Actions',
-                  //   accessor: '_id',
-                  //   // eslint-disable-next-line no-unused-vars
-                  //   Cell: row => (
-                  //     <div>
-                  //       <Button
-                  //         type="primary"
-                  //         icon="form"
-                  //         size="small"
-                  //         ghost
-                  //         onClick={() => this.onClickUpdateAirport(row.original)}>Update</Button>
-                  //       <Button
-                  //         className="ml-1"
-                  //         type="danger"
-                  //         icon="delete"
-                  //         size="small"
-                  //         onClick={() => this.onClickDeleteAirport(row.original, row.index)}
-                  //         ghost>Delete</Button>
-                  //     </div>
-                  //   ),
-                  // },
+                {
+                  Header: 'Actions',
+                  accessor: '_id',
+                  // eslint-disable-next-line no-unused-vars
+                  Cell: row => (
+                    <div>
+                      <Button
+                        type="primary"
+                        icon="form"
+                        size="small"
+                        ghost
+                        onClick={() => this.onClickUpdateFlight(row.original)}>Update</Button>
+                      <Button
+                        className="ml-1"
+                        type="danger"
+                        icon="delete"
+                        size="small"
+                        onClick={() => this.onClickDeleteFlight(row.original, row.index)}
+                        ghost>Delete</Button>
+                    </div>
+                  ),
+                },
                 ]}
               />
             )
@@ -205,7 +263,7 @@ class Flight extends Component {
               Cancel
             </Button>,
             <Button key="submit" type="primary" onClick={this.handleOk}>
-              Create
+              {isUpdate ? 'Update' : 'Create'}
             </Button>,
           ]}
         >
@@ -215,13 +273,18 @@ class Flight extends Component {
             label="From"
             required
           >
-            <Select
-              showSearch
-              style={{ width: 300 }}
-              onChange={(e) => this.setState({ fromAirportId: e })}
-            >
-              {airports.length > 0 && airports.map(this.renderSelectAirports)}
-            </Select>
+            {
+              airports.length > 0 && (
+                <Select
+                  placeholder="Please select from airport"
+                  showSearch
+                  style={{ width: 300 }}
+                  onChange={(e) => this.setState({ fromAirportId: e })}
+                >
+                  {airports.length > 0 && airports.map(this.renderSelectAirports)}
+                </Select>
+              )
+            }
           </Form.Item>
 
           <Form.Item
@@ -231,12 +294,69 @@ class Flight extends Component {
             required
           >
             <Select
+              placeholder="Please select to airport"
               showSearch
               style={{ width: 300 }}
               onChange={(e) => this.setState({ toAirportId: e })}
             >
               {airports.length > 0 && airports.map(this.renderSelectAirports)}
             </Select>
+          </Form.Item>
+
+          <Form.Item
+            {...formItemLayout}
+            className="mb-0"
+            label="Seats luxurious "
+            required
+          >
+            <InputNumber
+              style={{ width: 220 }}
+              placeholder="Number seats luxurious"
+              min={1}
+              value={numSeatsLuxurious}
+              onChange={(e) => this.setState({ numSeatsLuxurious: e })} />
+          </Form.Item>
+
+          <Form.Item
+            {...formItemLayout}
+            className="mb-0"
+            label="Price luxurious"
+            required
+          >
+            <InputNumber
+              style={{ width: 180 }}
+              placeholder="Price seats luxurious"
+              min={1}
+              value={priceLuxurious}
+              onChange={(e) => this.setState({ priceLuxurious: e })} />
+          </Form.Item>
+
+          <Form.Item
+            {...formItemLayout}
+            className="mb-0"
+            label="Seats ordinary "
+            required
+          >
+            <InputNumber
+              style={{ width: 220 }}
+              placeholder="Number seats ordinary"
+              min={1}
+              value={numSeatsOrdinary}
+              onChange={(e) => this.setState({ numSeatsOrdinary: e })} />
+          </Form.Item>
+
+          <Form.Item
+            {...formItemLayout}
+            className="mb-0"
+            label="Price ordinary"
+            required
+          >
+            <InputNumber
+              style={{ width: 180 }}
+              placeholder="Price seats ordinary"
+              min={1}
+              value={priceOrdinary}
+              onChange={(e) => this.setState({ priceOrdinary: e })} />
           </Form.Item>
 
           <Form.Item
@@ -259,20 +379,12 @@ class Flight extends Component {
             required
           >
             <InputNumber
+              placeholder="Enter times"
+              style={{ width: 150 }}
               min={1}
               max={24}
+              value={times}
               onChange={(e) => this.setState({ times: e })} />
-          </Form.Item>
-
-          <Form.Item
-            {...formItemLayout}
-            className="mb-0"
-            label="Number Seats"
-            required
-          >
-            <InputNumber
-              min={1}
-              onChange={(e) => this.setState({ numSeats: e })} />
           </Form.Item>
 
         </Modal>
@@ -285,6 +397,8 @@ Flight.propTypes = {
   getAirportsRequest: PropTypes.func,
   confirm: PropTypes.func,
   getFlightsRequest: PropTypes.func,
+  updateFlightRequest: PropTypes.func,
+  deleteFlightRequest: PropTypes.func,
   airports: PropTypes.array,
   flights: PropTypes.array,
 }
@@ -303,6 +417,10 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(FlightActions.createFlightRequest(params, resolve, reject)),
   getFlightsRequest: (params, resolve, reject) =>
     dispatch(FlightActions.getFlightsRequest(params, resolve, reject)),
+  deleteFlightRequest: (flightId, index) =>
+    dispatch(FlightActions.deleteFlightRequest(flightId, index)),
+  updateFlightRequest: (flightId, params) =>
+    dispatch(FlightActions.updateFlightRequest(flightId, params)),
 })
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps)
