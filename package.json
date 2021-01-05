@@ -64,7 +64,7 @@
     "@coreui/icons": "^0.3.0",
     "@coreui/react": "^2.1.1",
     "antd": "^3.18.1",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "bootstrap": "^4.1.3",
     "chalk": "^2.4.1",
     "compression": "1.7.3",
